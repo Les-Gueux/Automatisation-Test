@@ -1,10 +1,10 @@
 module.exports ={
     "development": {
-        "username": "d3y0lbg7abxmbuoi.chr7pe7iynqr.eu-west-1.rds.amazonaws.com",
-        "password": "a558swrtox429fmp",
-        "database": "q452du1luku22uf7",
-        "host": "nq1ybf7nwz7si6yu",
-        "dialect": "mysql"
+        "username": "hvovdokb",
+        "password": "GdItE9KmfYTEczIv71QwRwAe8_O6Pqfd",
+        "database": "hvovdokb",
+        "host": "castor.db.elephantsql.com",
+        "dialect": "postgres"
     },
     "test": {
         "username": "root",
@@ -14,7 +14,7 @@ module.exports ={
         "dialect": "mysql"
     },
     "production": {
-        "use_env_variable": "JAWSDB_URL",
-        "dialect": "mysql"
+        "use_env_variable": "postgres://hvovdokb:GdItE9KmfYTEczIv71QwRwAe8_O6Pqfd@castor.db.elephantsql.com/hvovdokb",
+        "dialect": "postgres"
     }
 }

@@ -17,10 +17,15 @@
     "mariadb": "^2.5.3",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
+    "pg": "^8.7.1",
     "sequelize": "^6.5.0",
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"
+  },
+  "engines": {
+    "node": "14.18.0",
+    "npm": "7.16.0"
   }
 }
