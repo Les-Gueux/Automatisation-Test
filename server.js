@@ -13,6 +13,7 @@ server.use(bodyParser.urlencoded({ extended: true}));
 server.use(bodyParser.json());
 
 server.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5000');
     res.setHeader('Access-Control-Allow-Origin', 'https://serverapimspr.herokuapp.com/');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', '*');
