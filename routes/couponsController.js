@@ -1,21 +1,22 @@
-var jwtUtils = require("../utils/jwt.utils");
-var models = require("../models");
-var asyncLib = require("async");
+const asyncLib = require("async");
+const jwtUtils = require("../utils/jwt.utils");
+const models = require("../models");
+
 const ITEMS_LIMIT = 50;
 
 module.exports = {
-  createCoupon: function (req, res) {
+  createCoupon (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
     // Paramètres
-    var code = req.body.code;
-    var dateDebut = req.body.dateDebut;
-    var dateExpiration = req.body.dateExpiration;
-    var productId = req.body.productId;
-    var reduction = req.body.reduction;
-    var condition = req.body.condition;
+    const {code} = req.body;
+    const {dateDebut} = req.body;
+    const {dateExpiration} = req.body;
+    const {productId} = req.body;
+    const {reduction} = req.body;
+    const {condition} = req.body;
 
     if (
       code.length == null ||
@@ -34,17 +35,15 @@ module.exports = {
         models.User.findOne({
           where: { id: userId },
         })
-          .then(function (userFound) {
+          .then((userFound) => {
             done(null, userFound);
           })
-          .catch(function (err) {
-            return res
+          .catch((err) => res
               .status(500)
               .json({
                 error:
                   "Impossible de vérifier lutilisateur ou vous n'êtes pas connecté",
-              });
-          });
+              }));
       },
       // Vérifie si le produit entré existe
       function (userFound, done) {
@@ -53,14 +52,12 @@ module.exports = {
           models.Product.findOne({
             where: { id: productId },
           })
-            .then(function (productFound) {
+            .then((productFound) => {
               done(null, productFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
-                .json({ error: "Impossible de trouver le produit identifié" });
-            });
+                .json({ error: "Impossible de trouver le produit identifié" }));
         } else {
           return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
@@ -69,9 +66,9 @@ module.exports = {
       function (productFound, done) {
         if (productFound) {
           models.Coupon.findOne({
-            where: { code: code },
+            where: { code },
           })
-            .then(function (couponFound) {
+            .then((couponFound) => {
               if (couponFound == null) {
                 done(null, couponFound);
               } else {
@@ -82,13 +79,11 @@ module.exports = {
                   });
               }
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
                 .json({
-                  error: "Impossible de trouver le coupon identifié" + err,
-                });
-            });
+                  error: `Impossible de trouver le coupon identifié${  err}`,
+                }));
         } else {
           return res.status(404).json({ error: "Produit non trouvé" });
         }
@@ -96,13 +91,13 @@ module.exports = {
       function (couponFound, done) {
         if (couponFound == null) {
           models.Coupon.create({
-            code: code,
-            dateDebut: dateDebut,
-            dateExpiration: dateExpiration,
-            productId: productId,
-            reduction: reduction,
-            condition: condition,
-          }).then(function (newCoupon) {
+            code,
+            dateDebut,
+            dateExpiration,
+            productId,
+            reduction,
+            condition,
+          }).then((newCoupon) => {
             done(null, newCoupon);
           });
         } else {
@@ -112,34 +107,32 @@ module.exports = {
       function (newCoupon, done) {
         if (newCoupon) {
           return res.status(201).json(newCoupon);
-        } else {
+        }
           return res
             .status(500)
             .json({ error: "Impossible de créer le coupon" });
-        }
+
       },
     ]);
   },
-  oneCoupon: function (req, res) {
+  oneCoupon (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
-    var code = req.query.code;
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
+    const {code} = req.query;
     asyncLib.waterfall([
       function (done) {
         models.User.findOne({
           where: { id: userId },
         })
-          .then(function (userFound) {
+          .then((userFound) => {
             console.log(userFound);
             done(null, userFound);
           })
-          .catch(function (err) {
-            return res.status(500).json({
+          .catch((err) => res.status(500).json({
               error:
-                "Impossible de vérifier lutilisateur ou non connecté" + err,
-            });
-          });
+                `Impossible de vérifier lutilisateur ou non connecté${  err}`,
+            }));
       },
       function (userFound, done) {
         if (userFound) {
@@ -151,7 +144,7 @@ module.exports = {
               "reduction",
               "condition",
             ],
-            where: { code: code },
+            where: { code },
             include: [
               {
                 model: models.Product,
@@ -160,16 +153,16 @@ module.exports = {
             ],
             truncate: true,
           })
-            .then(function (couponFound) {
+            .then((couponFound) => {
               if (couponFound) {
                 res.status(200).json(couponFound);
               } else {
                 res.status(404).json({ error: "Coupon Non trouvé" });
               }
             })
-            .catch(function (err) {
+            .catch((err) => {
               console.log(err);
-              res.status(500).json({ error: "Champs Invalide : " + err });
+              res.status(500).json({ error: `Champs Invalide : ${  err}` });
             });
         } else {
           return res.status(404).json({ error: "Utilisateur non trouvé" });
@@ -177,15 +170,15 @@ module.exports = {
       },
     ]);
   },
-  everyCouponsUsers: function (req, res) {
+  everyCouponsUsers (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
-    var fields = req.query.fields;
-    var limit = parseInt(req.query.limit);
-    var offset = parseInt(req.query.offset);
-    var order = req.query.order;
+    const {fields} = req.query;
+    let limit = parseInt(req.query.limit);
+    const offset = parseInt(req.query.offset);
+    const {order} = req.query;
     if (limit > ITEMS_LIMIT) {
       limit = ITEMS_LIMIT;
     }
@@ -195,19 +188,17 @@ module.exports = {
         models.User.findOne({
           where: { id: userId },
         })
-          .then(function (userFound) {
+          .then((userFound) => {
             done(null, userFound);
           })
-          .catch(function (err) {
-            return res
+          .catch((err) => res
               .status(500)
-              .json({ error: "Impossible de vérifier lutilisateur" });
-          });
+              .json({ error: "Impossible de vérifier lutilisateur" }));
       },
       function (userFound, done) {
         if (userFound) {
           models.UsersCoupons.findAll({
-            where: { userId: userId },
+            where: { userId },
             attributes: [],
             include: [
               {
@@ -227,26 +218,26 @@ module.exports = {
                 ],
               },
             ],
-            //order: [order != null ? order.split(":") : ["code", "ASC"]],
-            //attributes:
-            //fields !== "*" && fields != null ? fields.split(",") : null,
-            //limit: !isNaN(limit) ? limit : null,
-            //offset: !isNaN(offset) ? offset : null,
+            // order: [order != null ? order.split(":") : ["code", "ASC"]],
+            // attributes:
+            // fields !== "*" && fields != null ? fields.split(",") : null,
+            // limit: !isNaN(limit) ? limit : null,
+            // offset: !isNaN(offset) ? offset : null,
             // include: [{
             //   model: models.Product,
             //   attributes: ['nom']
             //  }],
           })
-            .then(function (messages) {
+            .then((messages) => {
               if (messages) {
                 res.status(200).json(messages);
               } else {
                 res.status(404).json({ error: "Coupon Non trouvé" });
               }
             })
-            .catch(function (err) {
+            .catch((err) => {
               console.log(err);
-              res.status(500).json({ error: "Champs Invalide " + err });
+              res.status(500).json({ error: `Champs Invalide ${  err}` });
             });
         } else {
           return res
@@ -256,14 +247,14 @@ module.exports = {
       },
     ]);
   },
-  createAssociation: function (req, res) {
+  createAssociation (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
     // Paramètres
-    var code = req.body.code;
-    var couponId = null;
+    const {code} = req.body;
+    let couponId = null;
 
     if (code.length == null) {
       return res.status(400).json({ error: "Paramètres manquant" });
@@ -275,26 +266,24 @@ module.exports = {
         models.User.findOne({
           where: { id: userId },
         })
-          .then(function (userFound) {
+          .then((userFound) => {
             done(null, userFound);
           })
-          .catch(function (err) {
-            return res
+          .catch((err) => res
               .status(500)
               .json({
                 error:
-                  "Impossible de vérifier lutilisateur ou vous n'êtes pas connecté" +
-                  err,
-              });
-          });
+                  `Impossible de vérifier lutilisateur ou vous n'êtes pas connecté${ 
+                  err}`,
+              }));
       },
       // Vérifie que le coupon existe via le code
       function (userFound, done) {
         if (userFound) {
           models.Coupon.findOne({
-            where: { code: code },
+            where: { code },
           })
-            .then(function (couponFound) {
+            .then((couponFound) => {
               if (couponFound != null) {
                 done(null, couponFound);
               } else {
@@ -305,13 +294,11 @@ module.exports = {
                   });
               }
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
                 .json({
-                  error: "Impossible de trouver le coupon identifié" + err,
-                });
-            });
+                  error: `Impossible de trouver le coupon identifié${  err}`,
+                }));
         } else {
           return res.status(404).json({ error: "Utilisateur non trouvé" });
         }
@@ -320,21 +307,19 @@ module.exports = {
         if (couponFound != null) {
           couponId = couponFound.id
           models.UsersCoupons.findOne({
-            where: { userId: userId,
-              couponId: couponId },
+            where: { userId,
+              couponId },
           })
-            .then(function (userscouponsFound) {
+            .then((userscouponsFound) => {
               done(null, userscouponsFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
                 .json({
                   error:
-                    "Impossible de vérifier la table UsersCoupons" +
-                    err,
-                });
-            });
+                    `Impossible de vérifier la table UsersCoupons${ 
+                    err}`,
+                }));
         } else {
           return res.status(404).json({ error: "Coupon non trouvé" });
         }
@@ -342,9 +327,9 @@ module.exports = {
       function (userscouponsFound, done) {
         if (userscouponsFound == null) {
           models.UsersCoupons.create({
-            userId: userId,
-            couponId: couponId,
-          }).then(function (newUserCoupon) {
+            userId,
+            couponId,
+          }).then((newUserCoupon) => {
             done(null, newUserCoupon);
           });
         } else {
@@ -354,41 +339,39 @@ module.exports = {
       function (newUserCoupon, done) {
         if (newUserCoupon) {
           return res.status(201).json(newUserCoupon);
-        } else {
+        }
           return res
             .status(500)
             .json({
               error:
                 "Impossible de créer l'association coupon pour l'utilisateur",
             });
-        }
+
       },
     ]);
   },
-  everyCouponsProduct: function (req, res) {
+  everyCouponsProduct (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
-    var productId = req.query.productId;
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
+    const {productId} = req.query;
 
     asyncLib.waterfall([
       function (done) {
         models.User.findOne({
           where: { id: userId },
         })
-          .then(function (userFound) {
+          .then((userFound) => {
             done(null, userFound);
           })
-          .catch(function (err) {
-            return res
+          .catch((err) => res
               .status(500)
-              .json({ error: "Impossible de vérifier lutilisateur" });
-          });
+              .json({ error: "Impossible de vérifier lutilisateur" }));
       },
       function (userFound, done) {
         if (userFound) {
           models.Coupon.findAll({
-            where: { productId: productId },
+            where: { productId },
             attributes: [
               "code",
               "dateDebut",
@@ -403,16 +386,16 @@ module.exports = {
               },
             ],
           })
-            .then(function (messages) {
+            .then((messages) => {
               if (messages) {
                 res.status(200).json(messages);
               } else {
                 res.status(404).json({ error: "Coupon Non trouvé" });
               }
             })
-            .catch(function (err) {
+            .catch((err) => {
               console.log(err);
-              res.status(500).json({ error: "Champs Invalide " + err });
+              res.status(500).json({ error: `Champs Invalide ${  err}` });
             });
         } else {
           return res
