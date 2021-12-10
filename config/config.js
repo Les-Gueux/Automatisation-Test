@@ -1,10 +1,10 @@
 module.exports ={
     "development": {
-        "username": "",
-        "password": "",
-        "database": "",
-        "host": "",
-        "dialect": "mysql"
+        "username": "hvovdokb",
+        "password": "GdItE9KmfYTEczIv71QwRwAe8_O6Pqfd",
+        "database": "hvovdokb",
+        "host": "castor.db.elephantsql.com",
+        "dialect": "postgres"
     },
     "test": {
         "username": "root",
