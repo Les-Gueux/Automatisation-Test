@@ -1,17 +1,18 @@
-var jwtUtils = require("../utils/jwt.utils");
-var models = require("../models");
-var asyncLib = require("async");
+const asyncLib = require("async");
+const jwtUtils = require("../utils/jwt.utils");
+const models = require("../models");
+
 const ITEMS_LIMIT = 50;
 
 module.exports = {
-  createProduct: function (req, res) {
+  createProduct (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
     // Paramètres
-    var nom = req.body.nom;
-    var prix = req.body.prix;
+    const {nom} = req.body;
+    const {prix} = req.body;
 
     if (nom.length == null || prix == null) {
       return res.status(400).json({ error: "Paramètres manquant" });
@@ -28,21 +29,19 @@ module.exports = {
           models.User.findOne({
             where: { id: userId },
           })
-            .then(function (userFound) {
+            .then((userFound) => {
               done(null, userFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
-                .json({ error: "Impossible de vérifier lutilisateur" });
-            });
+                .json({ error: "Impossible de vérifier lutilisateur" }));
         },
         function (userFound, done) {
           if (userFound) {
             models.Product.create({
-              nom: nom,
-              prix: prix,
-            }).then(function (newProduct) {
+              nom,
+              prix,
+            }).then((newProduct) => {
               done(newProduct);
             });
           } else {
@@ -50,26 +49,26 @@ module.exports = {
           }
         },
       ],
-      function (newProduct) {
+      (newProduct) => {
         if (newProduct) {
           return res.status(201).json(newProduct);
-        } else {
+        } 
           return res
             .status(500)
             .json({ error: "Impossible de créer le produit" });
-        }
+        
       }
     );
   },
-  everyProduct: function (req, res) {
+  everyProduct (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
-    var fields = req.query.fields;
-    var limit = parseInt(req.query.limit);
-    var offset = parseInt(req.query.offset);
-    var order = req.query.order;
+    const {fields} = req.query;
+    let limit = parseInt(req.query.limit);
+    const offset = parseInt(req.query.offset);
+    const {order} = req.query;
     if (limit > ITEMS_LIMIT) {
       limit = ITEMS_LIMIT;
     }
@@ -80,14 +79,12 @@ module.exports = {
           models.User.findOne({
             where: { id: userId },
           })
-            .then(function (userFound) {
+            .then((userFound) => {
               done(null, userFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
-                .json({ error: "Impossible de vérifier lutilisateur" });
-            });
+                .json({ error: "Impossible de vérifier lutilisateur" }));
         },
         function (userFound, done) {
           if (userFound) {
@@ -98,14 +95,14 @@ module.exports = {
               limit: !isNaN(limit) ? limit : null,
               offset: !isNaN(offset) ? offset : null,
             })
-              .then(function (messages) {
+              .then((messages) => {
                 if (messages) {
                   res.status(200).json(messages);
                 } else {
                   res.status(404).json({ error: "Produits Non trouvé" });
                 }
               })
-              .catch(function (err) {
+              .catch((err) => {
                 console.log(err);
                 res.status(500).json({ error: "Champs Invalide" });
               });
@@ -116,11 +113,11 @@ module.exports = {
       ],
     );
   },
-  oneProduct: function (req, res) {
+  oneProduct (req, res) {
     // Get l'authentification du Header
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
-    var nom = req.query.nom;
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
+    const {nom} = req.query;
 
     asyncLib.waterfall(
       [
@@ -128,30 +125,28 @@ module.exports = {
           models.User.findOne({
             where: { id: userId },
           })
-            .then(function (userFound) {
+            .then((userFound) => {
               done(null, userFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
-                .json({ error: "Impossible de vérifier lutilisateur ou non connecté" });
-            });
+                .json({ error: "Impossible de vérifier lutilisateur ou non connecté" }));
         },
         function (userFound, done) {
           if (userFound) {
             models.Product.findOne({
               attributes: ["id","nom", "prix"],
-              where: { nom: nom},
+              where: { nom},
               truncate: true,
             })
-              .then(function (messages) {
+              .then((messages) => {
                 if (messages) {
                   res.status(200).json(messages);
                 } else {
                   res.status(404).json({ error: "Produits Non trouvé" });
                 }
               })
-              .catch(function (err) {
+              .catch((err) => {
                 console.log(err);
                 res.status(500).json({ error: "Champs Invalide" });
               });
@@ -162,11 +157,11 @@ module.exports = {
       ],
     );
   },
-  updateProduct: function (req, res) {
-    var nom = req.body.nom;
-    var prix = req.body.prix;
-    var headerAuth = req.headers["authorization"];
-    var userId = jwtUtils.getUserId(headerAuth);
+  updateProduct (req, res) {
+    const {nom} = req.body;
+    const {prix} = req.body;
+    const headerAuth = req.headers.authorization;
+    const userId = jwtUtils.getUserId(headerAuth);
 
     asyncLib.waterfall(
       [
@@ -174,34 +169,30 @@ module.exports = {
           models.User.findOne({
             where: { id: userId },
           })
-            .then(function (userFound) {
+            .then((userFound) => {
               console.log(userFound)
               done(null, userFound);
             })
-            .catch(function (err) {
-              return res
+            .catch((err) => res
                 .status(500)
-                .json({ error: "Impossible de vérifier lutilisateur" });
-            });
+                .json({ error: "Impossible de vérifier lutilisateur" }));
         },
         function (userFound, done) {
           if (userFound) {
           models.Product.findOne({
             attributes: ["id","nom", "prix"],
-            where: { nom: nom},
+            where: { nom},
             truncate: true,
           })
-            .then(function (productFound) {
+            .then((productFound) => {
               console.log("productfound 2 : ")
               console.log(productFound);
               done(null, productFound);
             })
-            .catch(function (err) {
-              return res.status(500).json({
+            .catch((err) => res.status(500).json({
                 error:
                   "Impossible de trouver le produit",
-              });
-            });
+              }));
           } else {
             return res.status(404).json({ error: "Utilisateur non trouvé" });
           }
@@ -212,31 +203,31 @@ module.exports = {
           if (productFound) {
             productFound
               .update({
-                prix: prix,
+                prix,
               })
-              .then(function () {
+              .then(() => {
                 console.log("productfound 4 : ")
                 console.log(productFound)
                 done(productFound);
               })
-              .catch(function (err) {
+              .catch((err) => {
                 res
                   .status(500)
-                  .json({ error: "Impossible de mettre à jour le produit : " + err });
+                  .json({ error: `Impossible de mettre à jour le produit : ${  err}` });
               });
           } else {
             return res.status(404).json({ error: "Produit non trouvé" });
           }      
         },
       ],
-      function (updateProduct) {
+      (updateProduct) => {
         if (updateProduct) {
           return res.status(201).json(updateProduct);
-        } else {
+        } 
           return res
             .status(500)
             .json({ error: "Impossible de mettre à jour le produit" });
-        }
+        
       }
     );
   },

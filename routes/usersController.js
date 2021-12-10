@@ -1,22 +1,22 @@
-var bcrypt = require("bcrypt");
-var jwtUtils = require('../utils/jwt.utils');
-var models = require("../models");
-var asyncLib  = require('async');
-//const user = require("../models/user");
+const bcrypt = require("bcrypt");
+const asyncLib  = require('async');
+const jwtUtils = require('../utils/jwt.utils');
+const models = require("../models");
+// const user = require("../models/user");
 
-//Constante
-//Rejette tout les mails foireux
+// Constante
+// Rejette tout les mails foireux
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const PASSWORD_REGEX = /^(?=.*\d).{4,8}$/;
 
 module.exports = {
-    register: function(req, res) {
-    
-        var nom = req.body.nom; 
-        var prenom = req.body.prenom; 
-        var email = req.body.email; 
-        var password = req.body.password; 
-        
+    register(req, res) {
+
+        const {nom} = req.body;
+        const {prenom} = req.body;
+        const {email} = req.body;
+        const {password} = req.body;
+
         if (email == null || nom == null || prenom == null || password == null) {
             return res.status(400).json({"error": "Paramètres Manquant"});
         }
@@ -30,30 +30,28 @@ module.exports = {
       }
 
         if (!EMAIL_REGEX.test(email)) {
-            return res.status(400).json({"error": "Email Non Valide"});           
+            return res.status(400).json({"error": "Email Non Valide"});
         }
 
         if (!PASSWORD_REGEX.test(password)) {
-            return res.status(400).json({"error": "Mot de Passe Non Valide"});           
-        }  
+            return res.status(400).json({"error": "Mot de Passe Non Valide"});
+        }
 
         asyncLib.waterfall([
             function(done) {
               models.User.findOne({
                 attributes: ['email'],
-                where: { email: email }
+                where: { email }
               })
-              .then(function(userFound) {
+              .then((userFound) => {
                 done(null, userFound);
               })
-              .catch(function(err,userFound) {
-                return res.status(500).json({ 'error': "Impossible de vérifier l'utilisateur : " + err + "and function userFound : " + userFound });
-              });
+              .catch((err,userFound) => res.status(500).json({ 'error': `Impossible de vérifier l'utilisateur : ${  err  }and function userFound : ${  userFound}` }));
             },
             function(userFound, done) {
               if (!userFound) {
-                bcrypt.genSalt(10, function(err, salt) {
-                  bcrypt.hash(password, salt, function( err, bcryptedPassword ) {
+                bcrypt.genSalt(10, (err, salt) => {
+                  bcrypt.hash(password, salt, ( err, bcryptedPassword ) => {
                     done(null, userFound, bcryptedPassword);
                 });
               });
@@ -62,54 +60,50 @@ module.exports = {
               }
             },
             function(userFound, bcryptedPassword, done) {
-              var newUser = models.User.create({
-                email: email,
-                nom: nom,
-                prenom: prenom,
+              const newUser = models.User.create({
+                email,
+                nom,
+                prenom,
                 password: bcryptedPassword,
               })
-              .then(function(newUser) {
+              .then((newUser) => {
                 done(newUser);
               })
-              .catch(function(err) {
-                return res.status(500).json({ 'error': 'cannot add user 1, err : ' +err });
-              });
+              .catch((err) => res.status(500).json({ 'error': `cannot add user 1, err : ${ err}` }));
             }
-          ], function(newUser) {
+          ], (newUser) => {
             if (newUser) {
               return res.status(201).json({
                 'userId': newUser.id
               });
-            } else {
-              return res.status(500).json({ 'error': 'cannot add user 2, err : ' +err  });
             }
+              return res.status(500).json({ 'error': `cannot add user 2, err : ${ err}`  });
+
           });
         },
-        login: function(req, res) {
-          
+        login(req, res) {
+
           // Params
-          var email    = req.body.email;
-          var password = req.body.password;
-      
+          const {email} = req.body;
+          const {password} = req.body;
+
           if (email == null ||  password == null) {
             return res.status(400).json({ 'error': 'Paramètres manquant' });
           }
-      
+
           asyncLib.waterfall([
             function(done) {
               models.User.findOne({
-                where: { email: email }
+                where: { email }
               })
-              .then(function(userFound) {
+              .then((userFound) => {
                 done(null, userFound);
               })
-              .catch(function(err) {
-                return res.status(500).json({ 'error': "Impossible de vérifier l'utilisateur" + err });
-              });
+              .catch((err) => res.status(500).json({ 'error': `Impossible de vérifier l'utilisateur${  err}` }));
             },
             function(userFound, done) {
               if (userFound) {
-                bcrypt.compare(password, userFound.password, function(errBycrypt, resBycrypt) {
+                bcrypt.compare(password, userFound.password, (errBycrypt, resBycrypt) => {
                   done(null, userFound, resBycrypt);
                 });
               } else {
@@ -123,136 +117,130 @@ module.exports = {
                 return res.status(403).json({ 'error': 'Mot De Passe Invalide' });
               }
             }
-          ], function(userFound) {
+          ], (userFound) => {
             if (userFound) {
               return res.status(201).json({
                 'userId': userFound.id,
                 'token': jwtUtils.generateTokenForUser(userFound)
               });
-            } else {
-              return res.status(500).json({ 'error': 'Impossible de se connecter sur cet utilisateur' });
             }
+              return res.status(500).json({ 'error': 'Impossible de se connecter sur cet utilisateur' });
+
           });
         },
-        getUserProfile: function(req, res) {
+        getUserProfile(req, res) {
           // Get l'authentification du Header
-          var headerAuth  = req.headers['authorization'];
-          var userId      = jwtUtils.getUserId(headerAuth);
-      
+          const headerAuth  = req.headers.authorization;
+          const userId      = jwtUtils.getUserId(headerAuth);
+
           if (userId < 0)
             return res.status(400).json({ 'error': 'mauvais token' });
-      
+
           models.User.findOne({
             attributes: [ 'id', 'email', 'nom', 'prenom','createdAt','updatedAt' ],
             where: { id: userId }
-          }).then(function(user) {
+          }).then((user) => {
             if (user) {
               res.status(201).json(user);
             } else {
               res.status(404).json({ 'error': 'Utilisateur non trouvé' });
             }
-          }).catch(function(err) {
+          }).catch((err) => {
             res.status(500).json({ 'error': 'cannot fetch user' });
           });
         },
-        deleteUser: function(req, res){
-          var headerAuth  = req.headers['authorization'];
-          var userId      = jwtUtils.getUserId(headerAuth);
-          var banHammer   = req.body.idDelet;
-  
+        deleteUser(req, res){
+          const headerAuth  = req.headers.authorization;
+          const userId      = jwtUtils.getUserId(headerAuth);
+          const banHammer   = req.body.idDelet;
+
           asyncLib.waterfall([
             function(done) {
               models.User.findOne({
                 where: { id: userId},
                 truncate: true
             })
-            .then(function(userAdminFound) {
-                console.log("Id Utilisateur conecté : " + userAdminFound.id);
+            .then((userAdminFound) => {
+                console.log(`Id Utilisateur conecté : ${  userAdminFound.id}`);
                 // if (userAdminFound.isAdmin == 1){}
                 // else{return res.status(500).json({ 'error': "l'utilisateur connecté n'est pas Admin" });}
                 done(null);
             })
-            .catch(function(err) {
-                return res.status(500).json({ 'error': "Impossible de trouver l'utilisateur connecté ou vous n'avez pas les droits nécéssaire" });
-            });
+            .catch((err) => res.status(500).json({ 'error': "Impossible de trouver l'utilisateur connecté ou vous n'avez pas les droits nécéssaire" }));
           },
               function(done){
-                
+
                   models.User.findOne({
                       where: { id: banHammer},
                       truncate: true
                   })
-                  .then(function(UserFound) {
-                      console.log("id de l'utilisateur à supprimer : " + UserFound.id);
+                  .then((UserFound) => {
+                      console.log(`id de l'utilisateur à supprimer : ${  UserFound.id}`);
                       done(null, UserFound);
                   })
-                  .catch(function(err) {
-                      return res.status(500).json({ 'error': "Impossible de trouver l'utilisateur à supprimer, err : " + err });
-                  });
+                  .catch((err) => res.status(500).json({ 'error': `Impossible de trouver l'utilisateur à supprimer, err : ${  err}` }));
               },
               function(UserFound, done) {
                   if (UserFound) {
                       models.User.destroy({
                           where: { id: banHammer }
                       })
-                      .then(function (deleteUser) {
+                      .then((deleteUser) => {
                           done(deleteUser);
                       });
-                  
+
                   } else {
                       return res.status(404).json({ 'error': "L'utilisateur à supprimer n'a pas été trouvé" });
                   }
               },
-          ], function(deleteUser){
+          ], (deleteUser)=> {
                   if (deleteUser) {
                       return res.status(201).json(deleteUser);
                   }
-                  else {
+
                       return res.status(500).json({"error": "Impossible de supprimer l'utilisateur"});
-                  }
+
           });
       },
-        updateUserProfile: function(req, res) {
+        updateUserProfile(req, res) {
           // Getting auth header
-          var headerAuth  = req.headers['authorization'];
-          var userId      = jwtUtils.getUserId(headerAuth);
-      
+          const headerAuth  = req.headers.authorization;
+          const userId      = jwtUtils.getUserId(headerAuth);
+
           // Params
-          var nom = req.body.nom;
-          var prenom = req.body.prenom;
-      
+          const {nom} = req.body;
+          const {prenom} = req.body;
+
           asyncLib.waterfall([
             function(done) {
               models.User.findOne({
                 attributes: ['id', 'nom','prenom'],
                 where: { id: userId }
-              }).then(function (userFound) {
+              }).then((userFound) => {
                 done(null, userFound);
               })
-              .catch(function(err) {
-                return res.status(500).json({ 'error': 'Impossible de vérifier lutilisateur' });
-              });
+              .catch((err) => res.status(500).json({ 'error': 'Impossible de vérifier lutilisateur' }));
             },
             function(userFound, done) {
               if(userFound) {
                 userFound.update({
-                  nom: (nom ? nom : userFound.nom),
-                  prenom: (prenom ? prenom : userFound.prenom),
-                }).then(function() {
+                  nom: (nom || userFound.nom),
+                  prenom: (prenom || userFound.prenom),
+                }).then(() => {
                   done(userFound);
-                }).catch(function(err) {
+                }).catch((err) => {
                   res.status(500).json({ 'error': 'Impossible de mettre à jour lutilisateur' });
                 });
               } else {
                 res.status(404).json({ 'error': 'Utilisateur non trouvé' });
               }
             },
-          ], function(userFound) {
+          ], (userFound) => {
             if (userFound) {
               return res.status(201).json(userFound);
-            } else {
-              return res.status(500).json({ 'error': 'Impossible de mettre à jour le profil de lutilisateur' });
             }
+              return res.status(500).json({ 'error': 'Impossible de mettre à jour le profil de lutilisateur' });
+
           });
         }
       }
