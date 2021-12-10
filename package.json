@@ -1,0 +1,26 @@
+{
+  "name": "serverapimspr",
+  "version": "1.0.0",
+  "description": "Serveur API du projet MSPR",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0",
+    "bcrypt": "^5.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-utils": "^1.0.5",
+    "mariadb": "^2.5.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.5.0",
+    "swagger-ui-express": "^4.1.6"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
+  }
+}

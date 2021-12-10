@@ -1,0 +1,626 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Documentation du Serveur API Pour le projet MSPR",
+      "description": "En cours de développement",
+      "license": {
+        "name": "Déployé sur Heroku",
+        "url": "https://serverapimspr.herokuapp.com/"
+      }
+    },
+    "host": "serverapimspr.herokuapp.com",
+    "basePath": "/mspr/",
+    "tags": [
+      {
+        "name": "Users",
+        "description": "API for users in the system"
+      },
+      {
+        "name": "Products",
+        "description": "API for Product in the system"
+      },
+      {
+        "name": "Coupons",
+        "description": "API for Coupons in the system"
+      }
+    ],
+    "schemes": [
+      "https"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/users/register": {
+        "post": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Créer un nouvel utilisateur",
+          "description": "Créer un nouvel utilisateur",
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Créer un nouvel utilisateur",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "New user is created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      "/users/login": {
+        "post": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Se connecter",
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Permet une connexion via email et password",
+              "schema": {
+                "$ref": "#/definitions/UserLogin"
+              }
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      "/users/me": {
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Renvoie le token de l'utilisateur connecté",
+          "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "application/x-www-form-urlencoded"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer {TOKEN}",
+            "required": true,
+            "type": "string"
+          }
+        ],
+          "responses": {
+            "200": {
+              "description": "User is found",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update les infos de l'utilisateur",
+          "tags": [
+            "Users"
+          ],
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Update identifiant",
+              "schema": {
+                "$ref": "#/definitions/UserUpdate"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer {TOKEN}",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User is updated",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      
+
+      "/product/create": {
+        "post": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Créer un nouveau produit",
+          "description": "Créer un nouveau produit",
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "Créer un nouveau produit",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer {TOKEN}",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "New user is created",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        }
+      },
+      "/product/update": {
+        "put": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Update un produit",
+          "parameters": [
+            {
+              "name": "Product",
+              "in": "body",
+              "description": "Créer un nouveau produit",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer {TOKEN}",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        }
+      },
+      "/product/getall": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Récupère tout les produits",
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "application/x-www-form-urlencoded"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer {TOKEN}",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Récupère tout les produits",
+          "responses": {
+            "200": {
+              "description": "renvoie tout les produits existant",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        }
+      },
+      "/product/get": {
+        "parameters": [
+          {
+            "name": "nom",
+            "in": "query",
+            "required": true,
+            "description": "Nom du produit",
+            "type": "string"
+          },
+
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer {TOKEN}",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Products"
+          ],
+          "summary": "Renvoie un produit en fonction du nom",
+          "responses": {
+            "200": {
+              "description": "User is found",
+              "schema": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        }
+      },
+
+
+
+      "/coupon/create": {
+        "post": {
+          "tags": [
+            "Coupons"
+          ],
+          "summary": "Créer un nouveau Coupon",
+          "description": "Créer un nouveau Coupon",
+          "parameters": [
+            {
+              "name": "UsersCoupons",
+              "in": "body",
+              "description": "Créer un nouveau Coupon",
+              "schema": {
+                "$ref": "#/definitions/Coupon"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer {TOKEN}",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "New user is created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      "/coupon/createAssociation": {
+        "post": {
+          "tags": [
+            "Coupons"
+          ],
+          "description": "Créer une nouvelle association entre un utilisateur et un coupon",
+          "parameters": [
+            {
+              "name": "UsersCoupons",
+              "in": "body",
+              "description": "Créer une nouvelle association entre un utilisateur et un coupon",
+              "schema": {
+                "$ref": "#/definitions/CouponAssociation"
+              }
+            },
+            {
+              "name": "Content-Type",
+              "in": "header",
+              "required": true,
+              "type": "string",
+              "description": "application/x-www-form-urlencoded"
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer TOKEN",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "New user is created",
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      },
+      "/coupon/getall": {
+        "get": {
+          "tags": [
+            "Coupons"
+          ],
+          "summary": "Récupère tous les coupons associés à l'utilisateur",
+          "description": "Récupère tous les coupons associés à l'utilisateur",
+          "parameters": [          
+            {
+              "name": "Authorization",
+              "in": "header",
+              "description": "Bearer {TOKEN}",
+              "required": true,
+              "type": "string"
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Coupon"
+              }
+            }
+          }
+        }
+      },
+      "/coupon/get": {
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "description": "code du coupon",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer {TOKEN}",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Coupons"
+          ],
+          "summary": "Renvoie le coupon en fonction du code",
+          "responses": {
+            "200": {
+              "description": "Renvoie un coupon en fonction du code et de l'utilisateur connecté",
+              "schema": {
+                "$ref": "#/definitions/Coupon"
+              }
+            }
+          }
+        }
+      },
+      "/coupon/getcouponproduct": {
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "query",
+            "required": true,
+            "description": "id du produit",
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer {TOKEN}",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Coupons"
+          ],
+          "summary": "Renvoie la liste des Coupons en fonction de l'id de l'utilisateur ainsi que de l'id du produit donné",
+          "responses": {
+            "200": {
+              "description": "Renvoie un coupon en fonction du code et de l'utilisateur connecté",
+              "schema": {
+                "$ref": "#/definitions/Coupon"
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "User": {
+        "required": [
+          "nom",
+          "prenom",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserUpdate": {
+        "required": [
+          "nom",
+          "prenom"
+        ],
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "prenom": {
+            "type": "string"
+          }
+        }
+      },
+      "UserLogin": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Product": {
+        "required": [
+            "nom",
+            "prix"
+          ],
+          "properties": {
+            "nom": {
+              "type": "string"
+            },
+            "prix": {
+              "type": "float"
+            }
+          }
+      },
+      "ProductGet": {
+        "required": [
+            "nom"
+          ],
+          "properties": {
+            "nom": {
+              "type": "string"
+            }
+          }
+      },
+      "Coupon": {
+        "required": [
+            "code",
+            "dateDebut",
+            "dateExpiration",
+            "productId",
+            "reduction",
+            "condition"
+          ],
+          "properties": {
+            "code": {
+              "type": "varchar"
+            },
+            "dateDebut": {
+              "type": "datetime"
+            },
+            "dateExpiration": {
+              "type": "datetime"
+            },
+            "productId": {
+              "type": "int"
+            },
+              "reduction": {
+                "type": "float"
+              },
+              "condition": {
+                "type": "varchar"
+              }
+          }
+      },
+      "CouponAssociation": {
+        "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "type": "varchar"
+            }
+          }
+      }
+    }
+  }
