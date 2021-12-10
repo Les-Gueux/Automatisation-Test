@@ -1,0 +1,7 @@
+{
+  "extends": ["airbnb-base", "prettier", "plugin:node/recommended"],
+  "plugins": ["prettier"],
+  "parserOptions": {
+        "sourceType": "module"
+    }
+}
