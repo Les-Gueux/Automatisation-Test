@@ -14,7 +14,7 @@ module.exports ={
         "dialect": "mysql"
     },
     "production": {
-        "use_env_variable": "JAWSDB_URL",
-        "dialect": "mysql"
+        "use_env_variable": "postgres://hvovdokb:GdItE9KmfYTEczIv71QwRwAe8_O6Pqfd@castor.db.elephantsql.com/hvovdokb",
+        "dialect": "postgres"
     }
 }

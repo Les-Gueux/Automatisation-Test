@@ -275,3 +275,5 @@ dist
 config/config.js
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,node,visualstudiocode,macos
+
+package-lock.json
