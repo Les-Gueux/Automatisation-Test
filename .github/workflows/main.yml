@@ -12,9 +12,12 @@ on:
 jobs:
   test:
     name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
-    runs-on: windows
+    runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v2
     - name: test
       run: |
+        npm install
+        npm run build --if-present
         npm run test
