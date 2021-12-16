@@ -4,7 +4,7 @@
   "description": "Serveur API du projet MSPR",
   "main": "server.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --forceExit"
   },
   "author": "",
   "license": "ISC",
