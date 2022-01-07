@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const asyncLib  = require('async');
 const jwtUtils = require('../utils/jwt.utils');
 const models = require("../models");
-// const user = require("../models/user");
 
 // Constante
 // Rejette tout les mails foireux

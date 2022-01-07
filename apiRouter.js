@@ -20,7 +20,6 @@ exports.router = (function(){
 
     // Route Coupon
     apiRouter.route("/coupon/create/").post(couponsController.createCoupon);
-    // apiRouter.route("/coupon/getall/").get(couponsController.everyCoupon);
     apiRouter.route("/coupon/get/").get(couponsController.oneCoupon);
 
     // Association UsersCoupons
