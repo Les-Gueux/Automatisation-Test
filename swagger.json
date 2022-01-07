@@ -6,10 +6,10 @@
       "description": "En cours de développement",
       "license": {
         "name": "Déployé sur Heroku",
-        "url": "https://serverapimspr.herokuapp.com/"
+        "url": "https://automatisationtest.herokuapp.com/"
       }
     },
-    "host": "localhost:5000",
+    "host": "automatisationtest.herokuapp.com",
     "basePath": "/mspr/",
     "tags": [
       {
@@ -26,7 +26,7 @@
       }
     ],
     "schemes": [
-      "http"
+      "https"
     ],
     "consumes": [
       "application/json"
