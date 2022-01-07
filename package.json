@@ -4,6 +4,7 @@
   "description": "Serveur API du projet MSPR",
   "main": "server.js",
   "scripts": {
+    "commit": "git-cz",
     "test": "jest --forceExit",
     "semantic-release": "semantic-release --branches main"
   },
