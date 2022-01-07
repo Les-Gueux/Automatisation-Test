@@ -1,10 +1,11 @@
 {
   "name": "serverapimspr",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Serveur API du projet MSPR",
   "main": "server.js",
   "scripts": {
-    "test": "jest --forceExit"
+    "test": "jest --forceExit",
+    "semantic-release": "semantic-release --branches main"
   },
   "author": "",
   "license": "ISC",
@@ -29,10 +30,15 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.2",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "semantic-release": "^18.0.1"
   },
   "engines": {
     "node": "14.18.0",
     "npm": "7.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Les-Gueux/Automatisation-Test.git"
   }
 }
